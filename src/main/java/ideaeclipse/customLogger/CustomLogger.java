@@ -3,17 +3,20 @@ package ideaeclipse.customLogger;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 public class CustomLogger {
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    private final Thread currentThread;
+    private static final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_BLACK = "\u001B[30m";
+    private final LoggerManager manager;
+    private final Map<Integer, String> builder;
     private final Class<?> c;
     private Level loggerLevel;
 
-    public CustomLogger(final Class<?> c) {
-        this.currentThread = Thread.currentThread();
+    public CustomLogger(final Class<?> c, final LoggerManager manager) {
+        this.manager = manager;
+        this.manager.addLogger(this);
+        this.builder = new HashMap<>();
         this.c = c;
         this.loggerLevel = Level.INFO;
     }
@@ -56,12 +59,6 @@ public class CustomLogger {
 
     }
 
-    private String getCurrentDate() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();
-        return formatter.format(date);
-    }
-
     private String getCurrentDateAndTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
@@ -70,7 +67,9 @@ public class CustomLogger {
 
     private void printMessage(final String colour, final Level level, final String message) {
         if (this.loggerLevel.ordinal() <= level.ordinal()) {
-            System.out.println(colour + "[" + getCurrentDateAndTime() + "][" + format(c.getSimpleName(),20) + "][" + format(this.currentThread.getName().toLowerCase(),20) + "]" + "[" + format(level.name(),5)+ "]" + " : " + message);
+            String string = "[" + getCurrentDateAndTime() + "][" + format(c.getSimpleName(), 20) + "][" + format(Thread.currentThread().getName().toLowerCase(), 20) + "]" + "[" + format(level.name(), 5) + "]" + " : " + message;
+            this.builder.put(this.manager.getMessageCount(), string);
+            System.out.println(colour + string);
         }
     }
 
@@ -81,5 +80,9 @@ public class CustomLogger {
             string += new String(new char[length - string.length()]).replace("\0", " ");
         }
         return string;
+    }
+
+    Map<Integer, String> getDump() {
+        return this.builder;
     }
 }
