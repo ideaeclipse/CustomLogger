@@ -9,14 +9,14 @@ public class CustomLogger {
     private static final String ANSI_RED = "\u001B[31m";
     private static final String ANSI_BLACK = "\u001B[30m";
     private final LoggerManager manager;
-    private final Map<Integer, String> builder;
     private final Class<?> c;
+    private Map<Integer, String> map;
     private Level loggerLevel;
 
     public CustomLogger(final Class<?> c, final LoggerManager manager) {
         this.manager = manager;
         this.manager.addLogger(this);
-        this.builder = new HashMap<>();
+        this.map = new HashMap<>();
         this.c = c;
         this.loggerLevel = Level.INFO;
     }
@@ -68,7 +68,7 @@ public class CustomLogger {
     private void printMessage(final String colour, final Level level, final String message) {
         if (this.loggerLevel.ordinal() <= level.ordinal()) {
             String string = "[" + getCurrentDateAndTime() + "][" + format(c.getSimpleName(), 20) + "][" + format(Thread.currentThread().getName().toLowerCase(), 20) + "]" + "[" + format(level.name(), 5) + "]" + " : " + message;
-            this.builder.put(this.manager.getMessageCount(), string);
+            this.map.put(this.manager.getMessageCount(), string);
             System.out.println(colour + string);
         }
     }
@@ -83,6 +83,8 @@ public class CustomLogger {
     }
 
     Map<Integer, String> getDump() {
-        return this.builder;
+        Map<Integer, String> temp = this.map;
+        this.map = new HashMap<>();
+        return temp;
     }
 }
