@@ -57,8 +57,6 @@ public class Main {
         });
         list.execute();
         logger.info("Logger 1 Message 2");
-        logger.setLevel(Level.INFO);
-        logger.debug("Send Message");
         manager.dump();
     }
 }
