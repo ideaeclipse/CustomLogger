@@ -29,13 +29,16 @@ public class LoggerManager {
     }
 
     public boolean dump() {
-        File file = new File((logsDirectory.endsWith("/") ? logsDirectory : logsDirectory + "/") + "LogDumpFile-" + getDateTime().replace("/", "-").replace(" ", "-").replace(":", "-") + ".log");
+        File file = new File((logsDirectory.endsWith("/") ? logsDirectory : logsDirectory + "/") + getDate().replace("/", "-"));
+        if (!file.exists())
+            file.mkdir();
+        file = new File(file.getAbsolutePath() + "/LogDumpFile-" + getTime().replace(" ", "-").replace(":", "-") + ".log");
         System.out.println(file.getName());
         try {
             if (file.createNewFile()) {
                 if (file.canWrite()) {
                     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-                    writer.write("TimeStamp: " + getDateTime());
+                    writer.write("TimeStamp Of File Dump: " + getDate() + "-" + getTime());
                     writer.newLine();
                     Map<Integer, String> map = new HashMap<>();
                     for (CustomLogger c : this.loggerList) {
@@ -58,8 +61,14 @@ public class LoggerManager {
         return true;
     }
 
-    private String getDateTime() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    private String getDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+        return formatter.format(date);
+    }
+
+    private String getTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
         Date date = new Date();
         return formatter.format(date);
     }
