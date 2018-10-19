@@ -5,11 +5,23 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * This class manages all loggers and allows you to dump your console log into a .log file in the directory of your choice
+ * When dumped there will be a subfolder created for each date you have log files
+ * Log files are names using the follow convention LogDumpFile-HH-MM-SS.log
+ *
+ * @author ideaeclipse
+ * @see CustomLogger
+ * @see CountManager
+ */
 public class LoggerManager {
     private final List<CustomLogger> loggerList;
     private final String logsDirectory;
     private final CountManager countManager;
 
+    /**
+     * @param directory directory you wish to store your log files
+     */
     public LoggerManager(final String directory) {
         this.loggerList = new LinkedList<>();
         this.logsDirectory = directory;
@@ -20,20 +32,33 @@ public class LoggerManager {
 
     }
 
+    /**
+     * @param logger adds a logger to the list of loggers
+     */
     public void addLogger(final CustomLogger logger) {
         loggerList.add(logger);
     }
 
+    /**
+     * @return current messageCount, allows for syncing of messages from multiple loggers
+     * @see #dump()
+     */
     public Integer getMessageCount() {
         return this.countManager.getCount();
     }
 
+    /**
+     * This method takes all {@link CustomLogger#getDump()} which is a map of integer,string tuples and merges all of them into a single map
+     * By merging all them they get ordered based on their key which allows for a conversion to a list of values
+     * After converting to a list of values all lines are dumped into the designated log file and has a message with how many lines were printed
+     *
+     * @return status of whether logs where able to be dumped or not
+     */
     public boolean dump() {
         File file = new File((logsDirectory.endsWith("/") ? logsDirectory : logsDirectory + "/") + getDate().replace("/", "-"));
         if (!file.exists())
             file.mkdir();
         file = new File(file.getAbsolutePath() + "/LogDumpFile-" + getTime().replace(" ", "-").replace(":", "-") + ".log");
-        System.out.println(file.getName());
         try {
             if (file.createNewFile()) {
                 if (file.canWrite()) {
@@ -49,7 +74,8 @@ public class LoggerManager {
                         writer.write(s);
                         writer.newLine();
                     }
-                    writer.write("End of log file");
+                    writer.write("Ended Log with " + getMessageCount() + " messages");
+                    this.countManager.reset();
                     writer.newLine();
                     writer.close();
                 } else
@@ -61,12 +87,18 @@ public class LoggerManager {
         return true;
     }
 
+    /**
+     * @return current date
+     */
     private String getDate() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date date = new Date();
         return formatter.format(date);
     }
 
+    /**
+     * @return current Time
+     */
     private String getTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
         Date date = new Date();
