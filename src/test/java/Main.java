@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
-        LoggerManager manager = new LoggerManager(System.getProperty("user.dir") + "/logs/");
+        System.out.println("test");
+        LoggerManager manager = new LoggerManager(System.getProperty("user.dir") + "/logs/", Level.INFO);
         CustomLogger logger = new CustomLogger(Main.class, manager);
         logger.error("Logger 1 Message 1");
         AsyncList<Integer> list = new ForEachList<>();

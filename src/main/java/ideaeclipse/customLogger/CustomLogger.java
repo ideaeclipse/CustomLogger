@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class CustomLogger {
     private static final String ANSI_RED = "\u001B[31m";
-    private static final String ANSI_BLACK = "\u001B[30m";
+    private static final String ANSI_BLACK = "\u001B[37m";
     private final LoggerManager manager;
     private final Class<?> c;
     private Map<Integer, String> map;
@@ -31,7 +31,20 @@ public class CustomLogger {
         this.manager.addLogger(this);
         this.map = new HashMap<>();
         this.c = c;
-        this.loggerLevel = Level.INFO;
+        this.loggerLevel = manager.getGlobalLevel();
+    }
+
+    /**
+     * @param c            the class in which you're instantiated the terminal in.
+     * @param manager      the logger manager that will control all your loggers
+     * @param initialLevel sets the loggers initialLevel
+     */
+    public CustomLogger(final Class<?> c, final LoggerManager manager, final Level initialLevel) {
+        this.manager = manager;
+        this.manager.addLogger(this);
+        this.map = new HashMap<>();
+        this.c = c;
+        this.setLevel(initialLevel);
     }
 
     /**

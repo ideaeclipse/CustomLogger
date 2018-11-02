@@ -18,13 +18,15 @@ public class LoggerManager {
     private final List<CustomLogger> loggerList;
     private final String logsDirectory;
     private final CountManager countManager;
+    private final Level globalLevel;
 
     /**
      * @param directory directory you wish to store your log files
      */
-    public LoggerManager(final String directory) {
+    public LoggerManager(final String directory, final Level globalLevel) {
         this.loggerList = new LinkedList<>();
         this.logsDirectory = directory;
+        this.globalLevel = globalLevel;
         this.countManager = new CountManager();
         File temp = new File(directory);
         if (!temp.isDirectory())
@@ -45,6 +47,15 @@ public class LoggerManager {
      */
     public Integer getMessageCount() {
         return this.countManager.getCount();
+    }
+
+    /**
+     * Allows all loggers attached to this manager have a shared level state. Good for debug on/off
+     *
+     * @return global level
+     */
+    public Level getGlobalLevel() {
+        return globalLevel;
     }
 
     /**
