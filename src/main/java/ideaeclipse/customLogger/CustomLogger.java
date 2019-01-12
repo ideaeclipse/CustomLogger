@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class CustomLogger {
     private static final String ANSI_RED = "\u001B[31m";
-    private static final String ANSI_BLACK = "\u001B[37m";
+    private static final String ANSI_RESET = "\u001B[0m";
     private final LoggerManager manager;
     private final Class<?> c;
     private Map<Integer, String> map;
@@ -59,29 +59,29 @@ public class CustomLogger {
     /**
      * @param message prints a message with the info tag
      */
-    public void info(final String message) {
-        printMessage(ANSI_BLACK, Level.INFO, message);
+    public void info(final Object message) {
+        printMessage(ANSI_RESET, Level.INFO, String.valueOf(message));
     }
 
     /**
      * @param message prints a message with the debug tag
      */
-    public void debug(final String message) {
-        printMessage(ANSI_BLACK, Level.DEBUG, message);
+    public void debug(final Object message) {
+        printMessage(ANSI_RESET, Level.DEBUG, String.valueOf(message));
     }
 
     /**
      * @param message prints a message with the warn tag, the text is red
      */
-    public void warn(final String message) {
-        printMessage(ANSI_RED, Level.WARN, message);
+    public void warn(final Object message) {
+        printMessage(ANSI_RED, Level.WARN, String.valueOf(message));
     }
 
     /**
      * @param message prints a message with the error tag, the text is red
      */
-    public void error(final String message) {
-        printMessage(ANSI_RED, Level.ERROR, message);
+    public void error(final Object message) {
+        printMessage(ANSI_RED, Level.ERROR, String.valueOf(message));
     }
 
     /**
@@ -105,7 +105,7 @@ public class CustomLogger {
      */
     public void sendMessage(final Level level, final String message) {
         if (level != Level.ALL)
-            printMessage(ANSI_BLACK, level, message);
+            printMessage(ANSI_RESET, level, message);
         else
             debug(message);
 
